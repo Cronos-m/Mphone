@@ -12,7 +12,8 @@ const DEFAULTS = {
   hasPhoto: false, hasLockBg: false,
   hasCustomFont: false, customFontName: 'CustomInk',
   lockSkin: 'auto',
-  keyStyle: {}
+  keyStyle: {},
+  timeFormat: 'auto'  // 'auto' | '12' | '24'
 };
 
 /* ------------------------------------------------------------------ i18n */
@@ -87,8 +88,13 @@ function applyLockSkin() {
   const lock = $('screen-lock');
   if (!lock) return;
 
-  lock.classList.remove('skin-ios', 'skin-android');
-  lock.classList.add('skin-' + skin);
+  lock.classList.remove('platform-ios', 'platform-android');
+  lock.classList.add('platform-' + skin);
+
+  // ==============================================================
+
+    lock.classList.remove('skin-ios', 'skin-android');
+    lock.classList.add('skin-' + skin);
 
   const set = (name, value) => lock.style.setProperty(name, value);
   set('--k-w', `min(${k.w}px, ${(k.w / 3.9).toFixed(2)}vw)`);
@@ -456,6 +462,8 @@ function syncControls() {
   $('lock-preview').classList.toggle('no-circles', !state.circles);
   document.body.classList.toggle('mode-cards', state.mode === 'cards');
   document.body.classList.toggle('mode-numbers', state.mode === 'numbers');
+  // Sincroniza el selector de formato de hora
+$$('#time-format [data-fmt]').forEach(b => b.classList.toggle('on', b.dataset.fmt === state.timeFormat));
 }
 
 // Move the writing:
@@ -558,17 +566,34 @@ function hideToast() { $('toast').classList.remove('show'); }
 let pin = '', busy = false, clockTimer = 0, wake = null;
 
 function tickClock() {
-  const d = new Date(), loc = LANG().locale;
+  const d = new Date();
+  const loc = LANG().locale;
+  
+  // Determina si usar 12h o 24h:
+  // 'auto' → usa el del idioma (LANG().h12)
+  // '12'   → forzado 12h
+  // '24'   → forzado 24h
+  let use12h = LANG().h12;
+  if (state.timeFormat === '12') use12h = true;
+  if (state.timeFormat === '24') use12h = false;
+  
   const time = d.toLocaleTimeString(loc, {
-    hour: LANG().h12 ? 'numeric' : '2-digit',
+    hour: use12h ? 'numeric' : '2-digit',
     minute: '2-digit',
-    hour12: LANG().h12
+    hour12: use12h
   }).replace(/\s?[AP]M$/i, '');
+  
+  // Status bars (ambas capas)
   const st1 = $('status-time-text'), st2 = $('status-time-text-pin');
   if (st1) st1.textContent = time;
   if (st2) st2.textContent = time;
+  
+  // Reloj grande iOS
   const t1 = $('idle-time-ios'); if (t1) t1.textContent = time;
+  // Reloj grande Android
   const t2 = $('idle-time-android'); if (t2) t2.textContent = time;
+  
+  // Fecha
   const ds = d.toLocaleDateString(loc, { weekday: 'long', day: 'numeric', month: 'long' });
   const fecha = ds.charAt(0).toUpperCase() + ds.slice(1);
   const d1 = $('idle-date-ios'); if (d1) d1.textContent = fecha;

@@ -368,15 +368,10 @@ html,body{overscroll-behavior:none}
 #status-time{padding:6px 14px 6px 0;margin:-6px 0;touch-action:none;-webkit-user-select:none;user-select:none}
 .lock-clock{touch-action:none}
 
-
 /* ============================================================
    PANTALLA DE BLOQUEO · DOS CAPAS (IDLE + PIN)
-   ------------------------------------------------------------
-   lock-idle:  pantalla de reposo (reloj grande)
-   lock-pin:   pantalla de PIN (oculta hasta deslizar)
    ============================================================ */
 
-/* ---------- Base de las dos capas ---------- */
 .lock-idle,
 .lock-pin{
   position:absolute;inset:0;z-index:2;
@@ -385,220 +380,202 @@ html,body{overscroll-behavior:none}
   transition:transform .45s cubic-bezier(.2,.8,.2,1), opacity .35s ease;
 }
 
-/* lock-idle siempre visible por defecto; lock-pin oculto arriba */
-.lock-idle{z-index:2}
-.lock-pin{z-index:3;transform:translateY(100%);opacity:0;pointer-events:none}
+.lock-idle{
+  z-index:2;
+  transition: transform .4s cubic-bezier(.2,.8,.2,1), opacity .3s ease;
+}
+.lock-pin{
+  z-index:3;
+  transform: translateY(100%);
+  opacity: 0;
+  pointer-events: none;
+  transition: transform .4s cubic-bezier(.2,.8,.2,1), opacity .3s ease;
+}
 
-/* Cuando el usuario ha deslizado: idle sube y pin entra */
+/* Cuando se revela el PIN: idle sube y desaparece, pin entra */
+.lock.pin-revealed .lock-idle{
+  transform: translateY(-30%);
+  opacity: 0;
+  pointer-events: none;
+}
+.lock.pin-revealed .lock-pin{
+  transform: translateY(0);
+  opacity: 1;
+  pointer-events: auto;
+}
+
 .lock.pin-revealed .lock-idle{transform:translateY(-20%);opacity:0;pointer-events:none}
 .lock.pin-revealed .lock-pin{transform:translateY(0);opacity:1;pointer-events:auto}
-
-/* ---------- Status bar (compartida) ---------- */
-.hotspot{position:absolute;z-index:5;top:0;left:0;width:72px;height:60px}
-.status{
-  position:relative;z-index:2;display:flex;justify-content:space-between;align-items:center;
-  padding:calc(6px + var(--safe-t)) 18px 0;font-size:13px;font-weight:600;height:30px;
+.idle-ios .idle-clock div{
+  font-size:clamp(60px,18vw,110px);
+  font-weight:200;
+  line-height:.95;
+  letter-spacing:-.03em;
+  font-variant-numeric:tabular-nums;
 }
+.hotspot{position:absolute;z-index:5;top:0;left:0;width:72px;height:60px}
+.status{position:relative;z-index:2;display:flex;justify-content:space-between;align-items:center;padding:calc(6px + var(--safe-t)) 18px 0;font-size:13px;font-weight:600;height:30px}
 .status-r{display:flex;gap:5px;align-items:center}
 .status-r svg{width:14px;height:14px}
 .status-r .bat{transform:rotate(90deg);width:15px;height:15px}
 
-/* ---------- IDLE · iOS ---------- */
-.idle-ios{
-  flex:1;display:flex;flex-direction:column;align-items:center;
-  padding:8vh 24px 0;text-align:center;
-}
-.idle-ios .idle-date{
-  font-size:17px;font-weight:500;opacity:.95;margin-bottom:4px;
-}
-.idle-ios .idle-clock{
-  margin:6px 0 10px;
-}
-.idle-ios .idle-clock div{
-  font-size:clamp(86px,24vw,128px);
-  font-weight:200;line-height:.95;letter-spacing:-.03em;
+/* IDLE iOS */
+.idle-ios{flex:1;display:flex;flex-direction:column;align-items:center;padding:8vh 24px 0;text-align:center}
+.idle-ios .idle-date{font-size:17px;font-weight:500;opacity:.95;margin-bottom:4px}
+.idle-ios .idle-clock{margin:6px 0 10px}
+.idle-android .idle-clock div{
+  font-size:clamp(56px,17vw,100px);
+  font-weight:300;
+  line-height:1;
+  letter-spacing:-.02em;
   font-variant-numeric:tabular-nums;
 }
-.idle-ios .idle-weather{
-  display:flex;align-items:center;gap:6px;
-  font-size:15px;opacity:.85;margin-bottom:20px;
-}
+.idle-ios .idle-weather{display:flex;align-items:center;gap:6px;font-size:15px;opacity:.85;margin-bottom:20px}
 .idle-ios .idle-weather svg{width:16px;height:16px}
-.idle-ios .idle-dnd{
-  display:flex;align-items:center;gap:6px;
-  font-size:13px;opacity:.75;margin-bottom:auto;
-}
+.idle-ios .idle-dnd{display:flex;align-items:center;gap:6px;font-size:13px;opacity:.75;margin-bottom:auto}
 .idle-ios .idle-dnd svg{width:14px;height:14px}
-.idle-ios .idle-swipe{
-  font-size:14px;opacity:.7;margin-bottom:14px;
-}
-.idle-ios .idle-tools{
-  display:flex;justify-content:space-between;width:100%;
-  padding:0 14px 6vh;
-}
-.idle-ios .idle-tool{
-  width:50px;height:50px;border-radius:50%;
-  background:rgba(255,255,255,.15);backdrop-filter:blur(10px);
-  border:0;color:#fff;display:grid;place-items:center;
-}
+.idle-ios .idle-swipe{font-size:14px;opacity:.7;margin-bottom:14px}
+.idle-ios .idle-tools{display:flex;justify-content:space-between;width:100%;padding:0 14px 6vh}
+.idle-ios .idle-tool{width:50px;height:50px;border-radius:50%;background:rgba(255,255,255,.15);backdrop-filter:blur(10px);border:0;color:#fff;display:grid;place-items:center}
 .idle-ios .idle-tool svg{width:22px;height:22px}
 
-/* ---------- IDLE · Android ---------- */
-.idle-android{
-  flex:1;display:flex;flex-direction:column;align-items:center;
-  padding:10vh 24px 0;text-align:center;
-}
+/* IDLE Android */
+.idle-android{flex:1;display:flex;flex-direction:column;align-items:center;padding:10vh 24px 0;text-align:center}
 .idle-android .idle-clock{margin-bottom:6px}
-.idle-android .idle-clock div{
-  font-size:clamp(78px,22vw,110px);
-  font-weight:300;line-height:1;letter-spacing:-.02em;
-  font-variant-numeric:tabular-nums;
-}
-.idle-android .idle-date{
-  font-size:16px;font-weight:400;opacity:.9;margin-bottom:6px;
-}
-.idle-android .idle-weather{
-  display:flex;align-items:center;gap:6px;
-  font-size:14px;opacity:.75;margin-bottom:auto;
-}
-.idle-android .idle-weather svg{width:14px;height:14px}
-.idle-android .idle-dnd{
-  display:flex;align-items:center;gap:6px;
-  font-size:13px;opacity:.7;margin-bottom:30px;
-}
-.idle-android .idle-dnd svg{width:14px;height:14px}
-.idle-android .idle-swipe{
-  font-size:14px;opacity:.7;margin-bottom:4vh;
-}
 
-/* ---------- PIN · base compartida ---------- */
+.idle-android .idle-date{font-size:16px;font-weight:400;opacity:.9;margin-bottom:6px}
+.idle-android .idle-weather{display:flex;align-items:center;gap:6px;font-size:14px;opacity:.75;margin-bottom:auto}
+.idle-android .idle-weather svg{width:14px;height:14px}
+.idle-android .idle-dnd{display:flex;align-items:center;gap:6px;font-size:13px;opacity:.7;margin-bottom:30px}
+.idle-android .idle-dnd svg{width:14px;height:14px}
+.idle-android .idle-swipe{font-size:14px;opacity:.7;margin-bottom:4vh}
+
+/* PIN base */
 .lock-pin{padding:0 24px calc(14px + var(--safe-b))}
-.pin-lock-icon{
-  width:22px;height:22px;margin:14px auto 10px;opacity:.9;
-}
-.pin-title{
-  font-size:22px;font-weight:600;text-align:center;margin-bottom:4px;
-}
-.pin-subtitle{
-  font-size:14px;opacity:.7;text-align:center;margin-bottom:18px;
-}
-.pin-row{
-  position:relative;width:min(80vw,320px);height:44px;
-  display:flex;align-items:center;justify-content:center;margin:0 auto 8px;
-}
+.pin-lock-icon{width:22px;height:22px;margin:14px auto 10px;opacity:.9}
+.pin-title{font-size:22px;font-weight:600;text-align:center;margin-bottom:4px}
+.pin-subtitle{font-size:14px;opacity:.7;text-align:center;margin-bottom:18px}
+.pin-row{position:relative;width:min(80vw,320px);height:44px;display:flex;align-items:center;justify-content:center;margin:0 auto 8px}
 .pin-dots{display:flex;gap:16px}
-.pin-dots i{
-  width:13px;height:13px;border-radius:50%;
-  background:transparent;border:1.5px solid rgba(255,255,255,.85);
-  transition:background .15s ease, transform .15s ease;
-}
+.pin-dots i{width:13px;height:13px;border-radius:50%;background:transparent;border:1.5px solid rgba(255,255,255,.85);transition:background .15s ease, transform .15s ease}
 .pin-dots i.on{background:#fff;transform:scale(1.06)}
-.pin-del{
-  position:absolute;right:0;width:44px;height:44px;
-  display:grid;place-items:center;opacity:0;transition:opacity .15s;
-}
+.pin-del{position:absolute;right:0;width:44px;height:44px;display:grid;place-items:center;opacity:0;transition:opacity .15s}
 .pin-del.show{opacity:.95}
 
-/* ---------- PIN · iOS ---------- */
-.pin-ios{
-  flex:1;display:flex;flex-direction:column;align-items:center;
-  padding-top:4vh;
-}
-.pin-ios .keypad{
-  display:grid;grid-template-columns:repeat(3,1fr);
-  justify-items:center;row-gap:14px;column-gap:calc(var(--k-w,76px) * .30);
-  width:min(100%, calc(var(--k-w,76px) * 3 + var(--k-w,76px) * .60 + 8px));
-  margin:18px auto 14px;
-}
+/* PIN iOS */
+.pin-ios{flex:1;display:flex;flex-direction:column;align-items:center;padding-top:4vh}
+.pin-ios .keypad{display:grid;grid-template-columns:repeat(3,1fr);justify-items:center;row-gap:14px;column-gap:calc(var(--k-w,76px) * .30);width:min(100%, calc(var(--k-w,76px) * 3 + var(--k-w,76px) * .60 + 8px));margin:18px auto 14px}
 .pin-ios .key{
-  width:var(--k-w,76px);height:var(--k-h,76px);
+  width:clamp(60px, var(--k-w, 76px), 90px);
+  height:clamp(60px, var(--k-h, 76px), 90px);
   border-radius:var(--k-radius,50%);
   background:var(--k-bg,rgba(255,255,255,.16));
   backdrop-filter:blur(var(--k-blur,10px));
   -webkit-backdrop-filter:blur(var(--k-blur,10px));
-  color:#fff;font-size:var(--k-font,34px);font-weight:400;
-  display:flex;flex-direction:column;align-items:center;justify-content:center;
-  line-height:1;transition:background .12s ease, transform .12s ease;
+  color:#fff;
+  font-size:clamp(24px, var(--k-font, 34px), 40px);
+  font-weight:400;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  line-height:1;
+  transition:background .12s ease, transform .12s ease;
 }
-.pin-ios .key small{
-  font-size:calc(var(--k-font,34px) * .29);
-  letter-spacing:.16em;font-weight:600;opacity:.85;margin-top:calc(var(--k-font,34px) * .10);
-}
-.pin-ios .key:active,.pin-ios .key.press{
-  background:var(--k-bg-press,rgba(255,255,255,.38))!important;
-  transform:scale(.95);
-}
-/* Botón "enviar" (→) a la derecha del 0 */
-.pin-ios .key-send{
-  background:rgba(200,180,255,.35);
-}
+.pin-ios .key small{font-size:calc(var(--k-font,34px) * .29);letter-spacing:.16em;font-weight:600;opacity:.85;margin-top:calc(var(--k-font,34px) * .10)}
+.pin-ios .key:active,.pin-ios .key.press{background:var(--k-bg-press,rgba(255,255,255,.38))!important;transform:scale(.95)}
+.pin-ios .key-send{background:rgba(200,180,255,.35)}
 .pin-ios .key-send svg{width:26px;height:26px}
-/* Botón "borrar" (⌫) a la izquierda del 0 */
-.pin-ios .key-erase{
-  background:transparent;
-}
+.pin-ios .key-erase{background:transparent}
 .pin-ios .key-erase svg{width:26px;height:26px}
-.pin-ios .key-erase:active,.pin-ios .key-erase.press{
-  background:rgba(255,255,255,.15)!important;
-}
-.pin-ios .pin-foot-btn{
-  margin-top:8px;padding:10px 22px;border-radius:999px;
-  background:transparent;border:1px solid rgba(255,255,255,.3);
-  color:#fff;font-size:15px;
-}
-.pin-ios .pin-back-link{
-  position:absolute;bottom:calc(10px + var(--safe-b));left:18px;
-  display:flex;align-items:center;gap:6px;
-  background:transparent;border:0;color:rgba(255,255,255,.85);
-  font-size:15px;padding:8px 0;
-}
+.pin-ios .key-erase:active,.pin-ios .key-erase.press{background:rgba(255,255,255,.15)!important}
+.pin-ios .pin-foot-btn{margin-top:8px;padding:10px 22px;border-radius:999px;background:transparent;border:1px solid rgba(255,255,255,.3);color:#fff;font-size:15px}
+.pin-ios .pin-back-link{position:absolute;bottom:calc(10px + var(--safe-b));left:18px;display:flex;align-items:center;gap:6px;background:transparent;border:0;color:rgba(255,255,255,.85);font-size:15px;padding:8px 0}
 
-/* ---------- PIN · Android ---------- */
-.pin-android{
-  flex:1;display:flex;flex-direction:column;align-items:center;
-  padding-top:6vh;
-}
-.pin-android .keypad{
-  display:grid;grid-template-columns:repeat(3,1fr);
-  justify-items:center;row-gap:12px;column-gap:calc(var(--k-w,84px) * .30);
-  width:min(100%, calc(var(--k-w,84px) * 3 + var(--k-w,84px) * .60 + 8px));
-  margin:24px auto 14px;
-}
+/* PIN Android */
+.pin-android{flex:1;display:flex;flex-direction:column;align-items:center;padding-top:6vh}
+.pin-android .keypad{display:grid;grid-template-columns:repeat(3,1fr);justify-items:center;row-gap:12px;column-gap:calc(var(--k-w,84px) * .30);width:min(100%, calc(var(--k-w,84px) * 3 + var(--k-w,84px) * .60 + 8px));margin:24px auto 14px}
 .pin-android .key{
-  width:var(--k-w,84px);height:var(--k-h,64px);
+  width:clamp(60px, var(--k-w, 84px), 90px);
+  height:clamp(50px, var(--k-h, 64px), 75px);
   border-radius:var(--k-radius,50%);
   background:var(--k-bg,rgba(255,255,255,.20));
-  color:#fff;font-size:var(--k-font,30px);font-weight:400;
-  display:flex;flex-direction:column;align-items:center;justify-content:center;
-  line-height:1;transition:background .12s ease, transform .12s ease;
+  color:#fff;
+  font-size:clamp(22px, var(--k-font, 30px), 36px);
+  font-weight:400;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  line-height:1;
+  transition:background .12s ease, transform .12s ease;
 }
-.pin-android .key small{
-  font-size:calc(var(--k-font,30px) * .30);
-  letter-spacing:.10em;font-weight:600;opacity:.8;margin-top:calc(var(--k-font,30px) * .10);
-}
-.pin-android .key:active,.pin-android .key.press{
-  background:var(--k-bg-press,rgba(255,255,255,.42))!important;
-  transform:scale(.95);
-}
-.pin-android .pin-foot-row{
-  display:flex;justify-content:space-between;width:100%;
-  margin-top:auto;padding:0 8px 8px;
-}
-.pin-android .pin-foot-btn{
-  padding:10px 18px;border-radius:999px;
-  background:transparent;border:1px solid rgba(255,255,255,.25);
-  color:#fff;font-size:14px;
-}
+.pin-android .key small{font-size:calc(var(--k-font,30px) * .30);letter-spacing:.10em;font-weight:600;opacity:.8;margin-top:calc(var(--k-font,30px) * .10)}
+.pin-android .key:active,.pin-android .key.press{background:var(--k-bg-press,rgba(255,255,255,.42))!important;transform:scale(.95)}
+.pin-android .pin-foot-row{display:flex;justify-content:space-between;width:100%;margin-top:auto;padding:0 8px 8px}
+.pin-android .pin-foot-btn{padding:10px 18px;border-radius:999px;background:transparent;border:1px solid rgba(255,255,255,.25);color:#fff;font-size:14px}
 
-/* ---------- Ocultar la piel antigua por modo ---------- */
-/* Las pieles antiguas (.lock.skin-ios .key, etc.) siguen funcionando
-   porque ahora el teclado vive dentro de .pin-ios / .pin-android,
-   que heredan las variables --k-w, --k-h, etc. aplicadas por applyLockSkin(). */
-
-/* ---------- Ajuste pantallas bajas ---------- */
 @media (max-height:700px){
   .idle-ios .idle-clock div{font-size:78px}
   .idle-android .idle-clock div{font-size:70px}
   .pin-ios .keypad{row-gap:10px}
   .pin-android .keypad{row-gap:8px}
 }
+
+/* Selector de formato de hora en la home */
+.time-format-field {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 20px 4px;
+  font-size: 14px;
+  color: var(--muted);
+}
+.time-format-field .seg {
+  display: flex;
+  background: var(--surface-2);
+  border-radius: 10px;
+  padding: 3px;
+  gap: 2px;
+}
+.time-format-field .seg button {
+  flex: 1;
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--muted);
+  background: transparent;
+  border: 0;
+  transition: all .2s;
+}
+.time-format-field .seg button.on {
+  background: var(--accent);
+  color: #fff;
+}
+
+
+/* ============================================================
+   PLATAFORMA: mostrar solo la capa correspondiente
+   ============================================================ */
+
+/* Por defecto, ocultar ambas capas específicas */
+.lock-idle .idle-ios,
+.lock-idle .idle-android,
+.lock-pin .pin-ios,
+.lock-pin .pin-android {
+  display: none;
+}
+
+/* iOS: mostrar solo capas iOS */
+.lock.platform-ios .lock-idle .idle-ios,
+.lock.platform-ios .lock-pin .pin-ios {
+  display: flex;
+}
+
+/* Android: mostrar solo capas Android */
+.lock.platform-android .lock-idle .idle-android,
+.lock.platform-android .lock-pin .pin-android {
+  display: flex;
+}
+

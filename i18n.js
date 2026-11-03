@@ -82,6 +82,10 @@ window.MP_I18N = {
       "pinTitleAndroid": "Introduce el código",
       "back": "Atrás",
       "cancel": "Cancelar",
+      "timeFormat": "Formato de hora",
+      "formatAuto": "Auto",
+      "format12": "12h",
+      "format24": "24h",
     },
     "en": {
       "instGift": "Mental Picture",
@@ -157,7 +161,11 @@ window.MP_I18N = {
       "pinSubtitleIos": "Use your 4-digit PIN",
       "pinTitleAndroid": "Enter code",
       "back": "Back",
-      "cancel": "Cancel"
+      "cancel": "Cancel",
+      "timeFormat": "Time format",
+      "formatAuto": "Auto",
+      "format12": "12h",
+      "format24": "24h",
     },
     "it": {
       "instGift": "Mental Picture",
@@ -233,7 +241,11 @@ window.MP_I18N = {
       "pinSubtitleIos": "Usa il tuo PIN a 4 cifre",
       "pinTitleAndroid": "Inserisci il codice",
       "back": "Indietro",
-      "cancel": "Annulla"
+      "cancel": "Annulla",
+      "timeFormat": "Formato orario",
+      "formatAuto": "Auto",
+      "format12": "12h",
+      "format24": "24h",
     },
     "fr": {
       "instGift": "Mental Picture",
@@ -310,6 +322,10 @@ window.MP_I18N = {
       "pinTitleAndroid": "Entrez le code",
       "back": "Retour",
       "cancel": "Annuler",
+      "timeFormat": "Format de l'heure",
+      "formatAuto": "Auto",
+      "format12": "12h",
+      "format24": "24h",
     }
   },
   "STEPS": {
