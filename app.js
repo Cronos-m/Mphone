@@ -608,6 +608,10 @@ function tickClock() {
   const fecha = ds.charAt(0).toUpperCase() + ds.slice(1);
   const d1 = $('idle-date-ios'); if (d1) d1.textContent = fecha;
   const d2 = $('idle-date-android'); if (d2) d2.textContent = fecha;
+
+  // Reloj de la home
+const homeTime = $('home-time');
+if (homeTime) homeTime.textContent = time;
 }
 
 function renderDots() {
@@ -832,11 +836,25 @@ function setMode(m) {
   syncControls();
   ['cards', 'numbers'].forEach(k => $('mode-' + k).setAttribute('aria-checked', String(k === m)));
   renderPreview();
+
+  // Sincroniza los chips visuales
+$('mode-cards').classList.toggle('active', m === 'cards');
+$('mode-numbers').classList.toggle('active', m === 'numbers');
+
+
 }
 
 /* ------------------------------------------------------------- wiring */
-$('mode-cards').onclick = () => setMode('cards');
-$('mode-numbers').onclick = () => setMode('numbers');
+  $('mode-cards').onclick = () => {
+    setMode('cards');
+    $('mode-cards').classList.add('active');
+    $('mode-numbers').classList.remove('active');
+  };
+  $('mode-numbers').onclick = () => {
+    setMode('numbers');
+    $('mode-numbers').classList.add('active');
+    $('mode-cards').classList.remove('active');
+  };
 
 $('lang-toggle').onclick = e => {
   e.stopPropagation();
