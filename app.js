@@ -88,13 +88,12 @@ function applyLockSkin() {
   const lock = $('screen-lock');
   if (!lock) return;
 
+  // Marcar plataforma para que el CSS muestre la capa correcta
   lock.classList.remove('platform-ios', 'platform-android');
   lock.classList.add('platform-' + skin);
 
-  // ==============================================================
-
-    lock.classList.remove('skin-ios', 'skin-android');
-    lock.classList.add('skin-' + skin);
+  lock.classList.remove('skin-ios', 'skin-android');
+  lock.classList.add('skin-' + skin);
 
   const set = (name, value) => lock.style.setProperty(name, value);
   set('--k-w', `min(${k.w}px, ${(k.w / 3.9).toFixed(2)}vw)`);
@@ -116,9 +115,20 @@ function applyLockSkin() {
   }
 }
 
+// Cambia los <img> de batería/señal según la plataforma detectada.
+// Lee de img/battery-{platform}.png y img/signal-{platform}.png
+function applyStatusIcons() {
+  const skin = currentSkin();
+  const batterySrc = `img/battery-${skin}.png`;
+  const signalSrc  = `img/signal-${skin}.png`;
+
+  $$('.st-battery').forEach(img => { if (img) img.src = batterySrc; });
+  $$('.st-signal').forEach(img => { if (img) img.src = signalSrc; });
+  // El wifi usa el mismo asset de señal con opacidad reducida (vía CSS)
+  $$('.st-wifi').forEach(img => { if (img) img.src = signalSrc; });
+}
+
 function syncSkinControls() {
-  // (Los sliders del panel de edición se cablean más abajo; esta función
-  //  solo se llama si se añade el panel de edición en el HTML.)
   applyLockSkin();
 }
 
@@ -463,7 +473,7 @@ function syncControls() {
   document.body.classList.toggle('mode-cards', state.mode === 'cards');
   document.body.classList.toggle('mode-numbers', state.mode === 'numbers');
   // Sincroniza el selector de formato de hora
-$$('#time-format [data-fmt]').forEach(b => b.classList.toggle('on', b.dataset.fmt === state.timeFormat));
+  $$('#time-format [data-fmt]').forEach(b => b.classList.toggle('on', b.dataset.fmt === state.timeFormat));
 }
 
 // Move the writing:
@@ -568,7 +578,7 @@ let pin = '', busy = false, clockTimer = 0, wake = null;
 function tickClock() {
   const d = new Date();
   const loc = LANG().locale;
-  
+
   // Determina si usar 12h o 24h:
   // 'auto' → usa el del idioma (LANG().h12)
   // '12'   → forzado 12h
@@ -576,23 +586,23 @@ function tickClock() {
   let use12h = LANG().h12;
   if (state.timeFormat === '12') use12h = true;
   if (state.timeFormat === '24') use12h = false;
-  
+
   const time = d.toLocaleTimeString(loc, {
     hour: use12h ? 'numeric' : '2-digit',
     minute: '2-digit',
     hour12: use12h
   }).replace(/\s?[AP]M$/i, '');
-  
+
   // Status bars (ambas capas)
   const st1 = $('status-time-text'), st2 = $('status-time-text-pin');
   if (st1) st1.textContent = time;
   if (st2) st2.textContent = time;
-  
+
   // Reloj grande iOS
   const t1 = $('idle-time-ios'); if (t1) t1.textContent = time;
   // Reloj grande Android
   const t2 = $('idle-time-android'); if (t2) t2.textContent = time;
-  
+
   // Fecha
   const ds = d.toLocaleDateString(loc, { weekday: 'long', day: 'numeric', month: 'long' });
   const fecha = ds.charAt(0).toUpperCase() + ds.slice(1);
@@ -712,6 +722,7 @@ function startTrick(test) {
   lock.classList.remove('unlocking', 'shake', 'pin-revealed');
   lock.classList.toggle('circles', state.circles);
   applyLockSkin();
+  applyStatusIcons();
   buildKeypads();
   tickClock();
   clearInterval(clockTimer);
@@ -939,6 +950,16 @@ $('opt-circles').onchange = e => {
 
 $('lock-test').onclick = () => startTrick(true);
 
+// Selector de formato de hora (Auto / 12h / 24h)
+$$('#time-format [data-fmt]').forEach(btn => {
+  btn.onclick = () => {
+    state.timeFormat = btn.dataset.fmt;
+    persist();
+    $$('#time-format [data-fmt]').forEach(b => b.classList.toggle('on', b.dataset.fmt === state.timeFormat));
+    tickClock();
+  };
+});
+
 // Salida secreta: mantener pulsada la hora 2 segundos
 ['status-time', 'lock-clock', 'idle-time-ios', 'idle-time-android'].forEach(id => {
   let tm;
@@ -1085,6 +1106,7 @@ firstScreen();
   applyLang();
   syncControls();
   attachIdleSwipe();
+  applyStatusIcons();
 
   try {
     await Promise.all([
@@ -1124,5 +1146,6 @@ firstScreen();
   }
 })();
 
+// test hook
 window.__mp = { decode: c => resultLabel(decode(c)), state: () => state };
 })();

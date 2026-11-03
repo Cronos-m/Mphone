@@ -7,7 +7,7 @@
 <title>Mental Picture</title>
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="assets/icon.png">
-<link rel="apple-touch-icon" href="assets/icon.png">
+<link rel="apple-touch-icon" href="assets/icon-192.png">
 <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -75,14 +75,14 @@
   </div>
 
   <!-- Selector de formato de hora -->
-<div class="field time-format-field">
-  <span data-i18n="timeFormat"></span>
-  <div id="time-format" class="seg">
-    <button data-fmt="auto" class="on" data-i18n="formatAuto"></button>
-    <button data-fmt="12" data-i18n="format12"></button>
-    <button data-fmt="24" data-i18n="format24"></button>
+  <div class="time-format-field">
+    <span data-i18n="timeFormat"></span>
+    <div id="time-format" class="seg">
+      <button data-fmt="auto" class="on" data-i18n="formatAuto"></button>
+      <button data-fmt="12" data-i18n="format12"></button>
+      <button data-fmt="24" data-i18n="format24"></button>
+    </div>
   </div>
-</div>
 
   <div class="list">
     <button id="picture-btn" class="row">
@@ -294,8 +294,9 @@
     <div class="status">
       <span id="status-time-text"></span>
       <div class="status-r">
-        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M2 17l4-4 4 4 8-8 4 4V3H2z" opacity=".3"/><path d="M2 22l4-4 4 4 8-8 4 4v6H2z"/></svg>
-        <svg class="bat" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="7" y="3" width="10" height="18" rx="2"/><path d="M10 1h4"/></svg>
+        <img class="st-signal" src="img/signal-ios.png" alt="" width="18" height="12">
+        <img class="st-wifi" src="img/signal-ios.png" alt="" width="16" height="12">
+        <img class="st-battery" src="img/battery-ios.png" alt="" width="26" height="13">
       </div>
     </div>
 
@@ -348,8 +349,9 @@
     <div class="status">
       <span id="status-time-text-pin"></span>
       <div class="status-r">
-        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M2 17l4-4 4 4 8-8 4 4V3H2z" opacity=".3"/><path d="M2 22l4-4 4 4 8-8 4 4v6H2z"/></svg>
-        <svg class="bat" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="7" y="3" width="10" height="18" rx="2"/><path d="M10 1h4"/></svg>
+        <img class="st-signal" src="img/signal-ios.png" alt="" width="18" height="12">
+        <img class="st-wifi" src="img/signal-ios.png" alt="" width="16" height="12">
+        <img class="st-battery" src="img/battery-ios.png" alt="" width="26" height="13">
       </div>
     </div>
 
