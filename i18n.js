@@ -1,4 +1,4 @@
-/* Mental Picture · textos en 4 idiomas (Versión limpia, sin expiración, con fuente personalizada) */
+/* Mental Picture · textos en 4 idiomas (Versión limpia, sin expiración) */
 window.MP_I18N = {
   "LANGS": [
     { "code": "es", "name": "Español", "flag": "🇪🇸", "locale": "es-ES", "h12": false },
@@ -85,14 +85,7 @@ window.MP_I18N = {
       "timeFormat": "Formato de hora",
       "formatAuto": "Auto",
       "format12": "12h",
-      "format24": "24h",
-      "homeKicker": "TU EXPERIENCIA",
-      "homeSub": "Personaliza los detalles antes de empezar.",
-      "homeTitle": "Prepara tu teléfono",
-      "previewTitle": "Todo comienza en el bloqueo",
-      "previewLabel": "VISTA PREVIA",
-      "previewDesc": "Fondo de cristal, reloj y tu PIN de 4 dígitos.",
-      "startHint": "Comenzar por la pantalla de bloqueo",
+      "format24": "24h"
     },
     "en": {
       "instGift": "Mental Picture",
@@ -172,14 +165,7 @@ window.MP_I18N = {
       "timeFormat": "Time format",
       "formatAuto": "Auto",
       "format12": "12h",
-      "format24": "24h",
-      "homeKicker": "YOUR EXPERIENCE",
-      "homeTitle": "Prepare your phone",
-      "homeSub": "Customize the details before starting.",
-      "previewLabel": "PREVIEW",
-      "previewTitle": "It all starts at the lock screen",
-      "previewDesc": "Glass background, clock and your 4-digit PIN.",
-      "startHint": "Start with the lock screen",
+      "format24": "24h"
     },
     "it": {
       "instGift": "Mental Picture",
@@ -250,7 +236,7 @@ window.MP_I18N = {
       "fontReady": "Font personalizzato caricato",
       "fontReset": "Font originale ripristinato",
       "fontError": "Impossibile caricare il font",
-            "idleSwipe": "Scorri verso l'alto per sbloccare",
+      "idleSwipe": "Scorri verso l'alto per sbloccare",
       "pinTitleIos": "Inserisci il PIN",
       "pinSubtitleIos": "Usa il tuo PIN a 4 cifre",
       "pinTitleAndroid": "Inserisci il codice",
@@ -259,14 +245,7 @@ window.MP_I18N = {
       "timeFormat": "Formato orario",
       "formatAuto": "Auto",
       "format12": "12h",
-      "format24": "24h",
-      "homeKicker": "LA TUA ESPERIENZA",
-      "homeTitle": "Prepara il tuo telefono",
-      "homeSub": "Personalizza i dettagli prima di iniziare.",
-      "previewLabel": "ANTEPRIMA",
-      "previewTitle": "Tutto inizia dalla schermata di blocco",
-      "previewDesc": "Sfondo di vetro, orologio e il tuo PIN a 4 cifre.",
-      "startHint": "Inizia dalla schermata di blocco",
+      "format24": "24h"
     },
     "fr": {
       "instGift": "Mental Picture",
@@ -346,14 +325,7 @@ window.MP_I18N = {
       "timeFormat": "Format de l'heure",
       "formatAuto": "Auto",
       "format12": "12h",
-      "format24": "24h",
-      "homeKicker": "TON EXPÉRIENCE",
-      "homeTitle": "Prépare ton téléphone",
-      "homeSub": "Personnalise les détails avant de commencer.",
-      "previewLabel": "APERÇU",
-      "previewTitle": "Tout commence sur l'écran de verrouillage",
-      "previewDesc": "Fond en verre, horloge et ton code PIN à 4 chiffres.",
-      "startHint": "Commencer par l'écran de verrouillage",
+      "format24": "24h"
     }
   },
   "STEPS": {

@@ -13,20 +13,17 @@ const DEFAULTS = {
   hasCustomFont: false, customFontName: 'CustomInk',
   lockSkin: 'auto',
   keyStyle: {},
-  timeFormat: 'auto'  // 'auto' | '12' | '24'
+  timeFormat: 'auto'
 };
 
-/* ------------------------------------------------------------------ i18n */
 const { T, INSTR, ABOUT, STEPS, LANGS, WA, TG } = window.MP_I18N;
 const LANG = () => LANGS.find(l => l.code === state.lang) || LANGS[0];
 const t = k => (T[state.lang] || T.es)[k] || T.es[k] || k;
 
-/* ---------------------------------------------------------------- state */
 let state = { ...DEFAULTS };
 try { Object.assign(state, JSON.parse(localStorage.getItem(STORE_KEY) || '{}')); } catch {}
 function persist() { try { localStorage.setItem(STORE_KEY, JSON.stringify(state)); } catch {} }
 
-/* tiny IndexedDB key/value for images and fonts */
 const idb = (() => {
   let dbp;
   const open = () => dbp || (dbp = new Promise((res, rej) => {
@@ -48,18 +45,9 @@ const idb = (() => {
   };
 })();
 
-/* ============================================================
-   PIELES DE PANTALLA DE BLOQUEO (iOS / Android)
-   ============================================================ */
 const SKIN_DEFAULTS = {
-  ios: {
-    w: 84, h: 76, radius: 28, alpha: 18,
-    font: 34, gap: 14, blur: 10, letters: true
-  },
-  android: {
-    w: 76, h: 76, radius: 50, alpha: 22,
-    font: 32, gap: 12, blur: 0, letters: true
-  }
+  ios: { w: 84, h: 76, radius: 28, alpha: 18, font: 34, gap: 14, blur: 10, letters: true },
+  android: { w: 76, h: 76, radius: 50, alpha: 22, font: 32, gap: 12, blur: 0, letters: true }
 };
 
 function detectPlatform() {
@@ -71,9 +59,8 @@ function detectPlatform() {
 }
 const PLATFORM = detectPlatform();
 
-// Normaliza el estado: rellena los valores que falten con los de fábrica
 state.keyStyle = {
-  ios:     { ...SKIN_DEFAULTS.ios,     ...((state.keyStyle && state.keyStyle.ios) || {}) },
+  ios: { ...SKIN_DEFAULTS.ios, ...((state.keyStyle && state.keyStyle.ios) || {}) },
   android: { ...SKIN_DEFAULTS.android, ...((state.keyStyle && state.keyStyle.android) || {}) }
 };
 if (!['auto', 'ios', 'android'].includes(state.lockSkin)) state.lockSkin = 'auto';
@@ -88,10 +75,8 @@ function applyLockSkin() {
   const lock = $('screen-lock');
   if (!lock) return;
 
-  // Marcar plataforma para que el CSS muestre la capa correcta
   lock.classList.remove('platform-ios', 'platform-android');
   lock.classList.add('platform-' + skin);
-
   lock.classList.remove('skin-ios', 'skin-android');
   lock.classList.add('skin-' + skin);
 
@@ -115,24 +100,15 @@ function applyLockSkin() {
   }
 }
 
-// Cambia los <img> de batería/señal según la plataforma detectada.
-// Lee de img/battery-{platform}.png y img/signal-{platform}.png
 function applyStatusIcons() {
   const skin = currentSkin();
   const batterySrc = `img/battery-${skin}.png`;
-  const signalSrc  = `img/signal-${skin}.png`;
-
+  const signalSrc = `img/signal-${skin}.png`;
   $$('.st-battery').forEach(img => { if (img) img.src = batterySrc; });
   $$('.st-signal').forEach(img => { if (img) img.src = signalSrc; });
-  // El wifi usa el mismo asset de señal con opacidad reducida (vía CSS)
   $$('.st-wifi').forEach(img => { if (img) img.src = signalSrc; });
 }
 
-function syncSkinControls() {
-  applyLockSkin();
-}
-
-/* --------------------------------------------------------------- images */
 const photo = new Image();
 let photoURL = null, lockURL = null;
 
@@ -212,7 +188,6 @@ async function useLockFile(file) {
   } catch { toast(t('tBadImg')); }
 }
 
-/* -------------------------------------------------------- custom font */
 let customFontFace = null;
 
 async function loadCustomFont() {
@@ -269,7 +244,6 @@ async function resetFont() {
   toast(t('fontReset'));
 }
 
-/* ---------------------------------------------------------- the secret */
 function decode(code) {
   const d = code.split('').map(Number);
   if (state.mode === 'numbers') {
@@ -278,11 +252,7 @@ function decode(code) {
   }
   const sum = d[1] + d[2];
   const rank = { 1: 'A', 11: 'J', 12: 'Q', 13: 'K' }[sum] || String(sum);
-  return {
-    kind: 'card',
-    rank,
-    suit: ({ 1: 2, 2: 1, 3: 3, 4: 4 })[d[0]] || 0
-  };
+  return { kind: 'card', rank, suit: ({ 1: 2, 2: 1, 3: 3, 4: 4 })[d[0]] || 0 };
 }
 
 function resultLabel(r) {
@@ -292,12 +262,9 @@ function resultLabel(r) {
 function demoResult() {
   const code = $('test-code').value;
   if (/^\d{4}$/.test(code)) return decode(code);
-  return state.mode === 'numbers'
-    ? { kind: 'num', text: '9870' }
-    : { kind: 'card', rank: '5', suit: 1 };
+  return state.mode === 'numbers' ? { kind: 'num', text: '9870' } : { kind: 'card', rank: '5', suit: 1 };
 }
 
-/* ------------------------------------------------------------ drawing */
 function suitPath(s) {
   const p = new Path2D();
   const stem = () => {
@@ -428,7 +395,6 @@ function composeFull(r) {
   return c;
 }
 
-/* ------------------------------------------------------------ preview */
 let rafId = 0;
 function renderPreview() {
   cancelAnimationFrame(rafId);
@@ -472,11 +438,9 @@ function syncControls() {
   $('lock-preview').classList.toggle('no-circles', !state.circles);
   document.body.classList.toggle('mode-cards', state.mode === 'cards');
   document.body.classList.toggle('mode-numbers', state.mode === 'numbers');
-  // Sincroniza el selector de formato de hora
   $$('#time-format [data-fmt]').forEach(b => b.classList.toggle('on', b.dataset.fmt === state.timeFormat));
 }
 
-// Move the writing:
 (() => {
   const studio = $('studio'), tg = $('target');
   let pid = null, sx = 0, sy = 0, ox = 0, oy = 0;
@@ -534,7 +498,6 @@ function syncControls() {
   });
 })();
 
-/* -------------------------------------------------------------- screens */
 let current = 'settings';
 
 function show(name) {
@@ -561,7 +524,6 @@ window.addEventListener('popstate', () => {
   if (current !== 'settings' && current !== 'install') goHome();
 });
 
-/* ------------------------------------------------------------- toast */
 let toastTimer;
 function toast(msg) {
   const el = $('toast');
@@ -572,17 +534,12 @@ function toast(msg) {
 }
 function hideToast() { $('toast').classList.remove('show'); }
 
-/* ----------------------------------------------------------- lock screen */
 let pin = '', busy = false, clockTimer = 0, wake = null;
 
 function tickClock() {
   const d = new Date();
   const loc = LANG().locale;
 
-  // Determina si usar 12h o 24h:
-  // 'auto' → usa el del idioma (LANG().h12)
-  // '12'   → forzado 12h
-  // '24'   → forzado 24h
   let use12h = LANG().h12;
   if (state.timeFormat === '12') use12h = true;
   if (state.timeFormat === '24') use12h = false;
@@ -593,25 +550,15 @@ function tickClock() {
     hour12: use12h
   }).replace(/\s?[AP]M$/i, '');
 
-  // Status bars (ambas capas)
   const st1 = $('status-time-text'), st2 = $('status-time-text-pin');
   if (st1) st1.textContent = time;
   if (st2) st2.textContent = time;
-
-  // Reloj grande iOS
   const t1 = $('idle-time-ios'); if (t1) t1.textContent = time;
-  // Reloj grande Android
   const t2 = $('idle-time-android'); if (t2) t2.textContent = time;
-
-  // Fecha
   const ds = d.toLocaleDateString(loc, { weekday: 'long', day: 'numeric', month: 'long' });
   const fecha = ds.charAt(0).toUpperCase() + ds.slice(1);
   const d1 = $('idle-date-ios'); if (d1) d1.textContent = fecha;
   const d2 = $('idle-date-android'); if (d2) d2.textContent = fecha;
-
-  // Reloj de la home
-const homeTime = $('home-time');
-if (homeTime) homeTime.textContent = time;
 }
 
 function renderDots() {
@@ -633,22 +580,12 @@ function buildKeypads() {
 
   const iosHTML = [1,2,3,4,5,6,7,8,9].map(d =>
     `<button class="key" data-d="${d}">${d}${letters[d] ? `<small>${letters[d]}</small>` : ''}</button>`
-  ).join('') + `
-    <button class="key key-erase" data-action="erase">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 12h4l4-6v12l-4-6H3z"/><path d="M15 9l6 6M21 9l-6 6"/></svg>
-    </button>
-    <button class="key" data-d="0">0<small>+</small></button>
-    <button class="key key-send" data-action="send">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
-    </button>`;
+  ).join('') + `<button class="key key-erase" data-action="erase"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 12h4l4-6v12l-4-6H3z"/><path d="M15 9l6 6M21 9l-6 6"/></svg></button><button class="key" data-d="0">0<small>+</small></button><button class="key key-send" data-action="send"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>`;
   $('keypad-ios').innerHTML = iosHTML;
 
   const androidHTML = [1,2,3,4,5,6,7,8,9].map(d =>
     `<button class="key" data-d="${d}">${d}${letters[d] ? `<small>${letters[d]}</small>` : ''}</button>`
-  ).join('') + `
-    <button class="key" style="visibility:hidden"></button>
-    <button class="key" data-d="0">0<small>+</small></button>
-    <button class="key" style="visibility:hidden"></button>`;
+  ).join('') + `<button class="key" style="visibility:hidden"></button><button class="key" data-d="0">0<small>+</small></button><button class="key" style="visibility:hidden"></button>`;
   $('keypad-android').innerHTML = androidHTML;
 
   $$('.lock .key[data-d]').forEach(k => {
@@ -811,7 +748,6 @@ async function shareReveal() {
   downloadBlob(revealBlob);
 }
 
-/* ---------------------------------------------------------- language */
 function applyLang() {
   document.documentElement.lang = state.lang;
   $$('[data-i18n]').forEach(el => { el.textContent = t(el.dataset.i18n); });
@@ -836,25 +772,10 @@ function setMode(m) {
   syncControls();
   ['cards', 'numbers'].forEach(k => $('mode-' + k).setAttribute('aria-checked', String(k === m)));
   renderPreview();
-
-  // Sincroniza los chips visuales
-$('mode-cards').classList.toggle('active', m === 'cards');
-$('mode-numbers').classList.toggle('active', m === 'numbers');
-
-
 }
 
-/* ------------------------------------------------------------- wiring */
-  $('mode-cards').onclick = () => {
-    setMode('cards');
-    $('mode-cards').classList.add('active');
-    $('mode-numbers').classList.remove('active');
-  };
-  $('mode-numbers').onclick = () => {
-    setMode('numbers');
-    $('mode-numbers').classList.add('active');
-    $('mode-cards').classList.remove('active');
-  };
+$('mode-cards').onclick = () => setMode('cards');
+$('mode-numbers').onclick = () => setMode('numbers');
 
 $('lang-toggle').onclick = e => {
   e.stopPropagation();
@@ -968,7 +889,6 @@ $('opt-circles').onchange = e => {
 
 $('lock-test').onclick = () => startTrick(true);
 
-// Selector de formato de hora (Auto / 12h / 24h)
 $$('#time-format [data-fmt]').forEach(btn => {
   btn.onclick = () => {
     state.timeFormat = btn.dataset.fmt;
@@ -978,7 +898,6 @@ $$('#time-format [data-fmt]').forEach(btn => {
   };
 });
 
-// Salida secreta: mantener pulsada la hora 2 segundos
 ['status-time', 'lock-clock', 'idle-time-ios', 'idle-time-android'].forEach(id => {
   let tm;
   const h = $(id);
@@ -1046,7 +965,6 @@ document.addEventListener('visibilitychange', () => {
   }
 });
 
-/* ------------------------------------------------------------ install */
 const isInstalled = () =>
   ['fullscreen', 'standalone', 'minimal-ui'].some(m => matchMedia(`(display-mode: ${m})`).matches)
   || navigator.standalone === true;
@@ -1105,7 +1023,6 @@ function firstScreen() {
 
 firstScreen();
 
-/* --------------------------------------------------------------- boot */
 (async () => {
   try {
     const old = JSON.parse(localStorage.getItem('gee_mental_v2') || 'null');
@@ -1164,6 +1081,5 @@ firstScreen();
   }
 })();
 
-// test hook
 window.__mp = { decode: c => resultLabel(decode(c)), state: () => state };
 })();
